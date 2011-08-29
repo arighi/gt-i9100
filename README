@@ -1,0 +1,53 @@
+Linux kernel "-arighi" for Samsung Galaxy S II (GT-I9100)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+=== DISCLAIMER ===
+
+I take no responsibility for anything that may go wrong by you following these
+instructions. Proceed at your own risk!
+
+=== Requirements ===
+
+- A Samsung Galaxy S II (not necessarily rooted! you'll get a root shell when
+  you'll flash the new kernel)
+
+- The latest android SDK
+
+- The arm-none-eabi cross-compile toolchain (you can get it from the
+  CodeSourcery website)
+
+=== HOWTO ===
+
+Download and install the arm toolchain from the CodeSourcery website: be sure
+that arm-none-eabi-gcc is in your $PATH.
+
+Get the autobuild script:
+ $ git clone git://github.com/arighi/gt-i9100.git
+
+Run the script:
+ $ ./build-kernel.sh
+
+The script will download all the "-arighi" kernel source code, a initramfs
+template and it'll produces a new kernel ready to be flashed into the device.
+
+The file is called: kernel-gt-i9100-arighi.tar This file can be flashed using Odin.
+
+=== Additional notes ===
+
+- All the custom *.ko files are included into the initramfs to avoid potential
+  errors/problems with the original kernel modules (so it is always possible to
+  flash back the original kernel later, all the old kernel modules are still
+  there untouched).
+
+- After you've flashed the -arighi kernel you also have root access to your
+  device. The initramfs template enables adb root shell (ro.secure == 0), so an
+  adb shell will immediately drop you to a root shell. This means you can also
+  re-flash your device from Linux directly using the flash-kernel.sh script.
+
+- For the complete list of all the patches applied to this kernel have a look
+  at the git log here.
+
+- IMPORTANT: the fsync-disable patch (enabled in the kernel) can increase
+  performance and battery life, but it is dangerous!! It makes the software no
+  longer crash safe, so if you start to randomly kill your apps you may lose
+  some data.
