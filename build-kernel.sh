@@ -1,11 +1,20 @@
 #!/bin/bash
 
+USE_CLOCKWORKMOD=1
+
 TOPDIR=`pwd`
 OUTPUT=$TOPDIR/kernel-gt-i9100-arighi.tar
 CONFIG=$TOPDIR/linux-gt-i9100/.config
-SRC_INITRAMFS=$TOPDIR/initramfs-gt-i9100
 TMP_INITRAMFS=/tmp/initramfs
 MAKE_OPTS=
+
+if [ $USE_CLOCKWORKMOD == 1 ]; then
+	GIT_INITRAMFS=git://github.com/arighi/clockworkmod_galaxys2_initramfs.git
+	SRC_INITRAMFS=$TOPDIR/clockworkmod_galaxys2_initramfs
+else
+	GIT_INITRAMFS=git://github.com/arighi/initramfs-gt-i9100.git
+	SRC_INITRAMFS=$TOPDIR/initramfs-gt-i9100
+fi
 
 # get custom kernel
 if [ ! -d $TOPDIR/linux-gt-i9100 ]; then
@@ -13,8 +22,8 @@ if [ ! -d $TOPDIR/linux-gt-i9100 ]; then
 fi
 
 # get custom initrmfs
-if [ ! -e $TOPDIR/initramfs-gt-i9100 ]; then
-	git clone git://github.com/arighi/initramfs-gt-i9100.git || exit 1
+if [ ! -e $SRC_INITRAMFS ]; then
+	git clone $GIT_INITRAMFS || exit 1
 fi
 
 # configure the kernel
@@ -44,7 +53,7 @@ if [ -e $SRC_INITRAMFS ]; then
 fi
 
 # make kernel
-make ARCH=arm CROSS_COMPILE=arm-none-eabi- $MAKE_OPTS
+make -j64 ARCH=arm CROSS_COMPILE=arm-none-eabi- $MAKE_OPTS
 
 # cleanup temporary stuff
 rm -rf $TMP_INITRAMFS $TMP_INITRAMFS.cpio
